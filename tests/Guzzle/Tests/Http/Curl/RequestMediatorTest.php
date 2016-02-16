@@ -14,9 +14,9 @@ class RequestMediatorTest extends \Guzzle\Tests\GuzzleTestCase
 {
     public $events = array();
 
-    public function event($event)
+    public function event($event, $name)
     {
-        $this->events[] = $event;
+        $this->events[] = [$event, $name];
     }
 
     public function testEmitsEvents()
@@ -37,19 +37,19 @@ class RequestMediatorTest extends \Guzzle\Tests\GuzzleTestCase
 
         $mediator->progress('a', 'b', 'c', 'd');
         $this->assertEquals(1, count($this->events));
-        $this->assertEquals('curl.callback.progress', $this->events[0]->getName());
+        $this->assertEquals('curl.callback.progress', $this->events[0][1]);
 
         $this->assertEquals(3, $mediator->writeResponseBody('foo', 'bar'));
         $this->assertEquals(2, count($this->events));
-        $this->assertEquals('curl.callback.write', $this->events[1]->getName());
-        $this->assertEquals('bar', $this->events[1]['write']);
-        $this->assertSame($request, $this->events[1]['request']);
+        $this->assertEquals('curl.callback.write', $this->events[1][1]);
+        $this->assertEquals('bar', $this->events[1][0]['write']);
+        $this->assertSame($request, $this->events[1][0]['request']);
 
         $this->assertEquals('foo', $mediator->readRequestBody('a', 'b', 3));
         $this->assertEquals(3, count($this->events));
-        $this->assertEquals('curl.callback.read', $this->events[2]->getName());
-        $this->assertEquals('foo', $this->events[2]['read']);
-        $this->assertSame($request, $this->events[2]['request']);
+        $this->assertEquals('curl.callback.read', $this->events[2][1]);
+        $this->assertEquals('foo', $this->events[2][0]['read']);
+        $this->assertSame($request, $this->events[2][0]['request']);
     }
 
     public function testDoesNotUseRequestResponseBodyWhenNotCustom()

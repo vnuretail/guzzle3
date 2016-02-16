@@ -17,7 +17,7 @@ class MockObserver implements \Countable, EventSubscriberInterface
     public function has($eventName)
     {
         foreach ($this->events as $event) {
-            if ($event->getName() == $eventName) {
+            if ($event[1] == $eventName) {
                 return true;
             }
         }
@@ -39,10 +39,10 @@ class MockObserver implements \Countable, EventSubscriberInterface
     {
         $events = array();
         foreach ($this->events as $event) {
-            if (!isset($events[$event->getName()])) {
-                $events[$event->getName()] = array();
+            if (!isset($events[$event[1]])) {
+                $events[$event[1]] = array();
             }
-            $events[$event->getName()][] = $event;
+            $events[$event[1]][] = $event[0];
         }
 
         return $events;
@@ -58,8 +58,8 @@ class MockObserver implements \Countable, EventSubscriberInterface
         return null;
     }
 
-    public function update(Event $event)
+    public function update(Event $event, $name)
     {
-        $this->events[] = $event;
+        $this->events[] = [$event, $name];
     }
 }
